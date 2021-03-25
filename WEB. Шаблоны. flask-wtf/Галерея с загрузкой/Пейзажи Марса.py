@@ -1,19 +1,20 @@
-from flask import Flask, render_template, redirect
-from fileload import *
+from flask import Flask, render_template, redirect, request
 import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
-@app.route('/carousel', methods=['GET', 'POST'])
+@app.route('/gallery', methods=['GET', 'POST'])
 def sample_file_upload():
-    files = sorted(os.listdir("static/images"))
-    form = FileLoad()
-    if form.validate_on_submit():
-        f = form.file_load.data
-        return redirect("/carousel")
-    return render_template('carousel.html', title="Карусель", files=files, form=form)
+    files = os.listdir("static/images")
+    if request.method == "GET":
+        return render_template('carousel.html', title="Карусель", files=files, length=len(files))
+    elif request.method == "POST":
+        file = request.files['file']
+        with open(f"static/images/slide{len(files) + 1}.png", "wb") as file_write:
+            file_write.write(file.read())
+        return redirect("/gallery")
 
 
 if __name__ == '__main__':
