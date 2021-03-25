@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <body>
+        <h1>Пейзажи Марса</h1>
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for file in files %}
+                    <div class="carousel-item active" data-bs-interval="2000">
+                      <img src="/static/images/{{ file }}" class="d-block w-100" width="500" height="500" alt="...">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.file_load.label }}<br>
+                {{ form.file_load(class="form-control") }}<br>
+                {% for error in form.file_load.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        </form>
+    </body>
+{% endblock %}

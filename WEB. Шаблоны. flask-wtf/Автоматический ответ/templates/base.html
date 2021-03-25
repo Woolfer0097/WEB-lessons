@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url }}" />
+    <title>{{ title }}</title>
+</head>
+    <body>
+        <h1>Миссия Колонизация Марса!</h1>
+        <h4>И на Марсе будут яблони цвести!</h4>
+        {% for key, value in dict_items.items() %}
+            {% if key != "title" %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endif %}
+        {% endfor %}
+    </body>
+</html>

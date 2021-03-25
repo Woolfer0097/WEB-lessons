@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        <h1>Оформление каюты</h1>
+        <table>
+            <thead>
+                <tr class="table-secondary">
+                    <th scope="col" width="500px">Цвет стен</th>
+                    <th scope="col" width="500px">Эмблема</th>
+                </tr>
+            </thead>
+            {% if sex == "male" %}
+                <tbody>
+                    {% if age > 21 %}
+                        <tr>
+                            <td scope="row"><div id="older-male"></div></td>
+                            <td scope="row"><img src="/static/images/older-male.png" width="500" height="600"></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td scope="row"><div id="young-male"></div></td>
+                            <td scope="row"><img src="/static/images/young-male.png" width="500" height="600"></td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            {% elif sex == "female" %}
+                <tbody>
+                    {% if age > 21 %}
+                        <tr>
+                            <td scope="row"><div id="older-female"></div></td>
+                            <td scope="row"><img src="/static/images/older-female.png" width="500" height="600"></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td scope="row"><div id="young-female"></div></td>
+                            <td scope="row"><img src="/static/images/young-female.png" width="500" height="600"></td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            {% endif %}
+        </table>
+    </form>
+{% endblock %}

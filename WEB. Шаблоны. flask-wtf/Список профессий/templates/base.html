@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    </head>
+    <body>
+        <h1>Миссия Колонизация Марса!</h1>
+        <h4>И на Марсе будут яблони цвести!</h4>
+        <h2>Список профессий</h2>
+        {% if typ == "ul" %}
+            <ul>
+            {% for item in list_prof %}
+                    <li>{{ item }}</li>
+            {% endfor %}
+            </ul>
+        {% elif typ == "ol" %}
+            <ol>
+            {% for item in list_prof %}
+                    <li>{{ item }}</li>
+            {% endfor %}
+            </ol>
+        {% endif %}
+    </body>
+</html>
