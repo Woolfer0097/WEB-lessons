@@ -1,0 +1,16 @@
+{
+  "Jack":
+    {
+      "name": "Jack",
+      "surname": "Ryan",
+      "image_url": "static/images/Jack.png",
+      "prof_list": ["астрогеолог", "астролог", "космонавт", "специалист по радиационной защите"]
+    },
+  "John":
+    {
+      "name": "John",
+      "surname": "PewDiePie",
+      "image_url": "static/images/John.png",
+      "prof_list": ["астролог", "астрологонавт", "космолог", "специалист по радиационной защите насекомых"]
+    }
+}
