@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\WEB. Знакомство с flask-sqlalchemy\Первая работа\data\jobs.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\Итоговая самостоятельная работа\hide_and_seek.csv">
           <value>
             <Attribute>
