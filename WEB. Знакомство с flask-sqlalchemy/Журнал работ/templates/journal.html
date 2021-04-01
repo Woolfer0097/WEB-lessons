@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <body>
+        <h1>Works Log</h1>
+        {% for job, name, duration, collaborators, is_finished in data %}
+            <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col" width="300">Title of activity</th>
+                      <th scope="col" width="150">Team Leader</th>
+                      <th scope="col" width="50">Duration</th>
+                      <th scope="col" width="150">List of collaborators</th>
+                      <th scope="col" width="50">Is finished</th>
+                    </tr>
+                  </thead>
+                    <tr>
+                      <td>{{ job }}</td>
+                      <td>{{ name }}</td>
+                      <td>{{ duration }}</td>
+                      <td>{{ collaborators }}</td>
+                      {% if not is_finished %}
+                        <td class="table-danger">is not finished</td>
+                      {% else %}
+                        <td class="table-success">is finished</td>
+                      {% endif %}
+                    </tr>
+            </table>
+        {% endfor %}
+    </body>
+{% endblock %}
