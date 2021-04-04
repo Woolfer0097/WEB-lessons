@@ -1,6 +1,6 @@
 from requests import post
 
-print(post('http://127.0.0.1:8080/api/jobs',
+print(post('http://127.0.0.1:8080/api/jobs/1',
            json={'team_leader': 2,
                  'job': 'super puper engineer wow',
                  'work_size': 34,
