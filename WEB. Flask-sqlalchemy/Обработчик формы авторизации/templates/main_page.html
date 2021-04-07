@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="">
+        <h1>Работы пользователя</h1>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    {% for key in keys %}
+                        <th scope="col">{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for value in data %}
+                        <th scope="row">{{ value }}</th>
+                    {% endfor %}
+                </tr>
+          </tbody>
+        </table>
+    </form>
+{% endblock %}
