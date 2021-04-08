@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if job_flag %}
+    <form action="">
+            <h1>Работы пользователя</h1>
+            {% for job in data %}
+                <h1>Работа № {{ loop.index }}</h1>
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            {% for key in job.keys() %}
+                                <th scope="col">{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for value in job.values() %}
+                                {% if loop.index == 6 %}
+                                    {% if not value %}
+                                        <td class="table-danger">is not finished</td>
+                                    {% else %}
+                                        <td class="table-success">is finished</td>
+                                    {% endif %}
+                                {% else %}
+                                    <th scope="row">{{ value }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% if current_user.is_authenticated %}
+                            <div>
+                                <a href="/edit_job/{{ job['id'] }}" class="btn btn-warning">
+                                    Изменить
+                                </a>
+                                <a href="/job_delete/{{ job['id'] }}" class="btn btn-danger">
+                                    Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        </form>
+    {% elif department_flag %}
+        <h1>Департаменты пользователя</h1>
+            {% for department in data %}
+                <h1>Департамент № {{ loop.index }}</h1>
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            {% for key in department.keys() %}
+                                <th scope="col">{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for value in department.values() %}
+                                <th scope="row">{{ value }}</th>
+                            {% endfor %}
+                        </tr>
+                        {% if current_user.is_authenticated %}
+                            <div>
+                                <a href="/edit_department/{{ department['id'] }}" class="btn btn-warning">
+                                    Изменить
+                                </a>
+                                <a href="/department_delete/{{ department['id'] }}" class="btn btn-danger">
+                                    Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        </form>
+    {% endif %}
+{% endblock %}

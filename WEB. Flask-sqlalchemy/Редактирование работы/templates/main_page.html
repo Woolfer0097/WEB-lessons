@@ -9,7 +9,7 @@
             <table class="table">
                 <thead class="table-dark">
                     <tr>
-                        {% for key in keys %}
+                        {% for key in job.keys() %}
                             <th scope="col">{{ key }}</th>
                         {% endfor %}
                     </tr>
@@ -17,17 +17,17 @@
                 <tbody>
                         {% if current_user.is_authenticated %}
                             <div>
-                                <a href="/edit_job/{{ current_user.id }}" class="btn btn-warning">
+                                <a href="/edit_job/{{ job['id'] }}" class="btn btn-warning">
                                     Изменить
                                 </a>
-                                <a href="/job_delete/{{ current_user.id }}" class="btn btn-danger">
+                                <a href="/job_delete/{{ job['id'] }}" class="btn btn-danger">
                                     Удалить
                                 </a>
                             </div>
                         {% endif %}
                     <tr>
-                        {% for value in job %}
-                            {% if loop.index0 == 4 %}
+                        {% for value in job.values() %}
+                            {% if loop.index == 6 %}
                                 {% if not value %}
                                     <td class="table-danger">is not finished</td>
                                 {% else %}
