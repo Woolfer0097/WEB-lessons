@@ -70,15 +70,16 @@ def main_page():
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         jobs = db_sess.query(Jobs).filter(Jobs.team_leader == current_user.id).all()
         user_name = f"{user.name} {user.surname}"
-        keys = ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']
-        values = [[user_name, job.job, job.work_size, job.collaborators, job.is_finished] for job in jobs]
-        return render_template("main_page.html", title="Главная страница", name=user_name, keys=keys, data=values)
+        data = [{'id': job.id, 'team_leader': job.team_leader, 'job': job.job, 'work_size': job.work_size,
+                'collaborators': job.collaborators, 'is_finished': job.is_finished} for job in jobs]
+        return render_template("main_page.html", title="Главная страница", name=user_name, data=data)
     return render_template("main_page.html", title="Главная страница")
 
 
 @app.route("/add_job", methods=["GET", "POST"])
 def add_job():
     form = AddJobForm()
+    form.team_leader.data = current_user.id
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         jobs = Jobs()
@@ -95,15 +96,17 @@ def add_job():
     return render_template("add_job.html", title="Добавление работы", form=form)
 
 
-@app.route('/edit_job/<int:id>', methods=['GET', 'POST'])
+@app.route('/edit_job/<int:job_id>', methods=['GET', 'POST'])
 @login_required
-def edit_news(user_id):
+def edit_jobs(job_id):
     form = AddJobForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        jobs = db_sess.query(Jobs).filter(Jobs.team_leader == user_id | Jobs.team_leader == 1).first()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                          (Jobs.team_leader == current_user.id)
+                                          | (current_user.id == 1)).first()
         if jobs:
-            form.team_leader.data = jobs.team_leader
+            form.team_leader.data = current_user.id
             form.job.data = jobs.job
             form.work_size.data = jobs.work_size
             form.collaborators.data = jobs.collaborators
@@ -112,7 +115,9 @@ def edit_news(user_id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        jobs = db_sess.query(Jobs).filter(Jobs.team_leader == user_id | Jobs.team_leader == 1).first()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                          (Jobs.team_leader == current_user.id)
+                                          | (current_user.id == 1)).first()
         if jobs:
             jobs.team_leader = form.team_leader.data
             jobs.job = form.job.data
@@ -127,6 +132,21 @@ def edit_news(user_id):
                            title='Редактирование новости',
                            form=form
                            )
+
+
+@app.route('/job_delete/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def job_delete(job_id):
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                      (Jobs.team_leader == current_user.id)
+                                      | (current_user.id == 1)).first()
+    if jobs:
+        db_sess.delete(jobs)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 
 @app.route('/logout')
