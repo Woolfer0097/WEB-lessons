@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form action="">
+        <h1>Работы пользователя</h1>
+        {% for job in data %}
+            <h1>Работа № {{ loop.index }}</h1>
+            <table class="table">
+                <thead class="table-dark">
+                    <tr>
+                        {% for key in keys %}
+                            <th scope="col">{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                        {% if current_user.is_authenticated %}
+                            <div>
+                                <a href="/edit_job/{{ current_user.id }}" class="btn btn-warning">
+                                    Изменить
+                                </a>
+                                <a href="/job_delete/{{ current_user.id }}" class="btn btn-danger">
+                                    Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+                    <tr>
+                        {% for value in job %}
+                            {% if loop.index0 == 4 %}
+                                {% if not value %}
+                                    <td class="table-danger">is not finished</td>
+                                {% else %}
+                                    <td class="table-success">is finished</td>
+                                {% endif %}
+                            {% else %}
+                                <th scope="row">{{ value }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+    </form>
+{% endblock %}
