@@ -75,13 +75,15 @@ def main_page(table_type):
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         if table_type == "job":
+            user = db_sess.query(User).filter(User.id == Jobs.team_leader).first()
             jobs = db_sess.query(Jobs).filter(Jobs.team_leader == current_user.id).all()
-            data = [{'id': job.id, 'team_leader': job.team_leader, 'job': job.job, 'work_size': job.work_size,
+            data = [{'id': job.id, 'team_leader': f"{user.name} {user.surname}", 'job': job.job, 'work_size': job.work_size,
                     'collaborators': job.collaborators, 'is_finished': job.is_finished} for job in jobs]
             return render_template("main_page.html", title="Главная страница", data=data, job_flag=True)
         else:
-            departments = db_sess.query(Department).filter(Department.chief == current_user.id).all()
-            data = [{'id': department.id, 'title': department.title, 'chief': department.chief,
+            user = db_sess.query(User).filter(User.id == Department.chief).first()
+            departments = db_sess.query(Department).filter().all()
+            data = [{'id': department.id, 'title': department.title, 'chief': f"{user.name} {user.surname}",
                      'members': department.members, 'email': department.email}
                     for department in departments]
             return render_template("main_page.html", title="Главная страница", data=data, department_flag=True)

@@ -43,7 +43,7 @@
             {% endfor %}
         </form>
     {% elif department_flag %}
-        <h1>Департаменты пользователя</h1>
+        <h1>Департаменты</h1>
             {% for department in data %}
                 <h1>Департамент № {{ loop.index }}</h1>
                 <table class="table">
@@ -60,7 +60,7 @@
                                 <th scope="row">{{ value }}</th>
                             {% endfor %}
                         </tr>
-                        {% if current_user.is_authenticated %}
+                        {% if current_user.id == department['chief'] %}
                             <div>
                                 <a href="/edit_department/{{ department['id'] }}" class="btn btn-warning">
                                     Изменить
