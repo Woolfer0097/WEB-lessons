@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, abort, request
+from flask import Flask, render_template, redirect, abort, request, jsonify
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
@@ -75,17 +75,18 @@ def main_page(table_type):
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         if table_type == "job":
-            user = db_sess.query(User).filter(User.id == Jobs.team_leader).first()
-            jobs = db_sess.query(Jobs).filter(Jobs.team_leader == current_user.id).all()
-            data = [{'id': job.id, 'team_leader': f"{user.name} {user.surname}", 'job': job.job, 'work_size': job.work_size,
-                    'collaborators': job.collaborators, 'is_finished': job.is_finished} for job in jobs]
+            jobs = db_sess.query(Jobs).all()
+            data = [{'id': item.id, 'team_leader': db_sess.query(User).filter(User.id == item.team_leader).first().name,
+                     'job': item.job, 'work_size': item.work_size, 'collaborators': item.collaborators,
+                     'is_finished': item.is_finished}
+                    for item in jobs]
             return render_template("main_page.html", title="Главная страница", data=data, job_flag=True)
         else:
-            user = db_sess.query(User).filter(User.id == Department.chief).first()
-            departments = db_sess.query(Department).filter().all()
-            data = [{'id': department.id, 'title': department.title, 'chief': f"{user.name} {user.surname}",
-                     'members': department.members, 'email': department.email}
-                    for department in departments]
+            departments = db_sess.query(Department).all()
+            data = [{"id": item.id, "title": item.title,
+                     "chief_name": db_sess.query(User).filter(User.id == item.chief).first().name,
+                     "members": item.members, "email": item.email, "chief": item.chief}
+                    for item in departments]
             return render_template("main_page.html", title="Главная страница", data=data, department_flag=True)
 
 
@@ -115,9 +116,7 @@ def edit_jobs(job_id):
     form = JobForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
-                                          (Jobs.team_leader == current_user.id)
-                                          | (current_user.id == 1)).first()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id).first()
         if jobs:
             form.team_leader.data = current_user.id
             form.job.data = jobs.job
@@ -128,9 +127,7 @@ def edit_jobs(job_id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
-                                          (Jobs.team_leader == current_user.id)
-                                          | (current_user.id == 1)).first()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == job_id).first()
         if jobs:
             jobs.team_leader = form.team_leader.data
             jobs.job = form.job.data
@@ -151,9 +148,7 @@ def edit_jobs(job_id):
 @login_required
 def job_delete(job_id):
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).filter(Jobs.id == job_id,
-                                      (Jobs.team_leader == current_user.id)
-                                      | (current_user.id == 1)).first()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == job_id).first()
     if jobs:
         db_sess.delete(jobs)
         db_sess.commit()
@@ -188,9 +183,7 @@ def edit_department(department_id):
     form = DepartmentForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        department = db_sess.query(Department).filter(Department.id == department_id,
-                                                      (Department.chief == current_user.id)
-                                                      | (current_user.id == 1)).first()
+        department = db_sess.query(Department).filter(Department.id == department_id).first()
         if department:
             form.title.data = department.title
             form.chief.data = department.chief
@@ -200,9 +193,7 @@ def edit_department(department_id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        department = db_sess.query(Department).filter(Department.id == department_id,
-                                                      (Department.chief == current_user.id)
-                                                      | (current_user.id == 1)).first()
+        department = db_sess.query(Department).filter(Department.id == department_id).first()
         if department:
             department.title = form.title.data
             department.chief = form.chief.data
@@ -222,9 +213,7 @@ def edit_department(department_id):
 @login_required
 def department_delete(department_id):
     db_sess = db_session.create_session()
-    departments = db_sess.query(Department).filter(Department.id == department_id,
-                                                   (Department.chief == current_user.id)
-                                                   | (current_user.id == 1)).first()
+    departments = db_sess.query(Department).filter(Department.id == department_id).first()
     if departments:
         db_sess.delete(departments)
         db_sess.commit()
