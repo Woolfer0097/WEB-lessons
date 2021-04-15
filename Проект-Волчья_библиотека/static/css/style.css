@@ -1,0 +1,32 @@
+.white-text {
+    color: white;
+    padding: 10px;
+}
+.black-text {
+    color: black;
+}
+form {
+    margin: auto;
+    text-align: center;
+    width: 600px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex: 0 0 auto;
+
+  background: #e6ffe6;/*это свойство можно удалить, добавлено для наглядности*/
+}
