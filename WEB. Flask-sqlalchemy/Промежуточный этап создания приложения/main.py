@@ -92,7 +92,7 @@ def add_job():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect("/")
-    return render_template("add_job.html", title="Добавление работы", form=form)
+    return render_template("job.html", title="Добавление работы", form=form)
 
 
 @app.route('/logout')
