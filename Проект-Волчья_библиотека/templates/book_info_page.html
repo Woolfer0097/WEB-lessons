@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="post">
+        <h1>{{ title }}</h1>
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for link in images %}
+                    {% if loop.index0 == 0 %}
+                        <div class="carousel-item active" data-bs-interval="2000">
+                          <img src="/{{ link }}" class="d-block w-100" width="500" height="500"
+                               alt="Изображение не найдено">
+                        </div>
+                    {% else %}
+                        <div class="carousel-item" data-bs-interval="2000">
+                          <img src="/{{ link }}" class="d-block w-100" width="500" height="500"
+                               alt="Изображение не найдено">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+<!--        <form action="" method="post" novalidate enctype="multipart/form-data">-->
+<!--           <div class="form-group">-->
+<!--                <label for="photo">Выберите файл</label>-->
+<!--                <input type="file" class="form-control-file" id="photo" name="file">-->
+<!--            </div>-->
+<!--            <button type="submit" class="btn btn-primary">Отправить</button>-->
+<!--        </form>-->
+    </form>
+{% endblock %}

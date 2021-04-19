@@ -1,10 +1,36 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex: 0 0 auto;
+
+    background: #d0d0d0;/*это свойство можно удалить, добавлено для наглядности*/
+}
+
 h5 {
     color: #808080;
     margin-left: 20px;
 }
+
 h1 {
     text-align: center;
 }
+
+h2 {
+    margin: 20px;
+}
+
 form {
     margin-left: auto;
     margin-right: auto;

@@ -19,4 +19,4 @@ class Book(SqlAlchemyBase, SerializerMixin):
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     genre_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("genres.id"))
     user = orm.relation('User')
-    genre = orm.relation('Genre', back_populates='books')
+    genre = orm.relation('Genre')

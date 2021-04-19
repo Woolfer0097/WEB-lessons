@@ -9,4 +9,4 @@ class Genre(SqlAlchemyBase, SerializerMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String)
-    book = orm.relation('Book')
+    book = orm.relation('Book', back_populates="genre")

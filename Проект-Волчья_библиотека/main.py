@@ -2,9 +2,11 @@ from flask import Flask, render_template, redirect, abort, request, url_for
 from data import db_session
 from data.users import User
 from data.book import Book
+from data.genres import Genre
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from forms.login import LoginForm
 from forms.register import RegisterForm
+from forms.edit_book import EditBookForm
 from forms.change_password import ChangePasswordForm
 
 app = Flask(__name__)
@@ -19,19 +21,9 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter((User.email == form.email.data) | (User.nickname == form.email.data)).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/main_page")
-        return render_template('login_page.html',
-                               message="Неправильный логин или пароль",
-                               form=form)
-    return render_template("login_page.html", title="Авторизация", form=form)
+@app.route("/main_page")
+def main_page():
+    return render_template("main_page.html", title="Главная страница")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -59,9 +51,19 @@ def reqister():
     return render_template('register_page.html', title='Регистрация', form=form)
 
 
-@app.route("/main_page")
-def main_page():
-    return render_template("main_page.html", title="Главная страница")
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter((User.email == form.email.data) | (User.nickname == form.email.data)).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/main_page")
+        return render_template('login_page.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template("login_page.html", title="Авторизация", form=form)
 
 
 @app.route("/personal_account")
@@ -86,11 +88,6 @@ def change_avatar():
         return render_template("change_avatar_page.html", title="Смена аватара")
 
 
-@app.route("/")
-def index():
-    return render_template("editor.html", title="Редактор")
-
-
 @app.route("/change_password", methods=["GET", "POST"])
 @login_required
 def change_password():
@@ -109,9 +106,41 @@ def change_password():
         return render_template("change_password_page.html", title="Смена пароля", form=form)
 
 
-@app.route("/edit_book/<int:book_id>")
+@app.route("/show_book/<int:book_id>")
+def show_book(book_id):
+    db_sess = db_session.create_session()
+    book = db_sess.query(Book).filter(Book.id == book_id).first()
+    images = book.image_links.split()
+    return render_template("book_info_page.html",
+                           title=book.title, images=images, author=book.book_author, genre=book.genre.title)
+
+
+@app.route("/edit_book/<int:book_id>", methods=["GET", "POST"])
 @login_required
 def edit_book(book_id):
+    db_sess = db_session.create_session()
+    book = db_sess.query(Book).filter(Book.id == book_id).first()
+    form = EditBookForm()
+    form.genre.choices = [(i.id, i.title) for i in db_sess.query(Genre).filter(Book.title).all()]
+    if request.method == "GET":
+        form.title.data = book.title
+        form.book_author.data = book.book_author
+        form.genre.selected = book.genre.id
+        return render_template("edit_book_page.html", form=form)
+    else:
+
+        return render_template("edit_book_page.html", form=form)
+
+
+@app.route("/add_book/<int:book_id>", methods=["GET", "POST"])
+@login_required
+def add_book(book_id):
+    pass
+
+
+@app.route("/delete_book/<int:book_id>", methods=["GET", "POST"])
+@login_required
+def delete_book(book_id):
     pass
 
 
