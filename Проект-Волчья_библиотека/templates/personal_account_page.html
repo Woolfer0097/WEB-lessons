@@ -2,11 +2,7 @@
 
 {% block content %}
     <form method="post" enctype="multipart/form-data">
-       <h1>Загрузка аватара пользователя</h1>
-       <div class="form-group">
-            <label for="photo">Выберите файл</label>
-            <input type="file" class="form-control-file" id="photo" name="file">
-        </div>
-        <button type="submit" class="btn btn-primary">Отправить</button>
+        <a href="/change_password" class="btn btn-dark">Смена пароля</a>
+        <a href="/change_avatar" class="btn btn-dark">Смена аватара</a>
     </form>
 {% endblock %}

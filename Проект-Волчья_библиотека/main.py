@@ -5,6 +5,7 @@ from data.book import Book
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from forms.login import LoginForm
 from forms.register import RegisterForm
+from forms.change_password import ChangePasswordForm
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -63,8 +64,15 @@ def main_page():
     return render_template("main_page.html", title="Главная страница")
 
 
-@app.route("/personal_account", methods=["GET", "POST"])
+@app.route("/personal_account")
+@login_required
 def personal_account():
+    return render_template("personal_account_page.html", title="Личный кабинет")
+
+
+@app.route("/change_avatar", methods=["GET", "POST"])
+@login_required
+def change_avatar():
     db_sess = db_session.create_session()
     if request.method == "POST":
         file = request.files['file']
@@ -73,9 +81,38 @@ def personal_account():
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         user.user_avatar = f"{current_user.nickname}.png"
         db_sess.commit()
-        return render_template("personal_account_page.html", title="Личный кабинет")
+        return redirect("/change_avatar")
     else:
-        return render_template("personal_account_page.html", title="Личный кабинет")
+        return render_template("change_avatar_page.html", title="Смена аватара")
+
+
+@app.route("/")
+def index():
+    return render_template("editor.html", title="Редактор")
+
+
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    db_sess = db_session.create_session()
+    form = ChangePasswordForm()
+    if request.method == "POST":
+        if current_user.check_password(form.old_password.data):
+            current_user.set_password(form.password.data)
+            db_sess.merge(current_user)
+            db_sess.commit()
+            return redirect("/personal_account")
+        else:
+            return render_template("change_password_page.html", title="Смена пароля", form=form,
+                                   message="Неправильный пароль")
+    else:
+        return render_template("change_password_page.html", title="Смена пароля", form=form)
+
+
+@app.route("/edit_book/<int:book_id>")
+@login_required
+def edit_book(book_id):
+    pass
 
 
 @app.route('/logout')

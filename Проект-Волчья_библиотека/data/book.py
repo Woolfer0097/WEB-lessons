@@ -9,10 +9,14 @@ class Book(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'books'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    genre_id = sqlalchemy.Column(sqlalchemy.Integer)
+    title = sqlalchemy.Column(sqlalchemy.String)
     book_author = sqlalchemy.Column(sqlalchemy.String)
-    book_size = sqlalchemy.Column(sqlalchemy.String)
+    content_analysis = sqlalchemy.Column(sqlalchemy.TEXT)
+    image_links = sqlalchemy.Column(sqlalchemy.String)
+    pdf_link = sqlalchemy.Column(sqlalchemy.String)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     updated_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-    user_author = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    genre_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("genres.id"))
     user = orm.relation('User')
+    genre = orm.relation('Genre', back_populates='books')
