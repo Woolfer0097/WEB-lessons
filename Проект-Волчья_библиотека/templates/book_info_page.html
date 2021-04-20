@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h5 style="text-align: right; padding: 10px">Книгу разместил: {{ user_author }}</h5>
     <form action="" method="post">
-        <h1>{{ title }}</h1>
+        <h1 class="font-weight-bold">{{ title }}</h1>
+        <h3 class="font-weight-bold">{{ author }}</h3>
         <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 {% for link in images %}
@@ -29,4 +31,8 @@
 <!--            <button type="submit" class="btn btn-primary">Отправить</button>-->
 <!--        </form>-->
     </form>
+    <div class="text-show">
+        <p class="display-1 font-weight-bold">Анализ</p>
+        {{ content_analysis|safe }}
+    </div>
 {% endblock %}

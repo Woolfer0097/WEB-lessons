@@ -25,11 +25,6 @@
         <p>
             {{ form.genre.label }}<br>
             {{ form.genre(class="form-select form-select form-select-lg mb-3") }}<br>
-            {% for error in form.genre.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
         </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
         <div>{{ message }}</div>

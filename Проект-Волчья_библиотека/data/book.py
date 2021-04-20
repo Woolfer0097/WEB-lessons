@@ -12,7 +12,7 @@ class Book(SqlAlchemyBase, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String)
     book_author = sqlalchemy.Column(sqlalchemy.String)
     content_analysis = sqlalchemy.Column(sqlalchemy.TEXT)
-    image_links = sqlalchemy.Column(sqlalchemy.String)
+    image_link = sqlalchemy.Column(sqlalchemy.String)
     pdf_link = sqlalchemy.Column(sqlalchemy.String)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     updated_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, abort, request, url_for
+from datetime import datetime
 from data import db_session
 from data.users import User
 from data.book import Book
@@ -19,11 +20,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
-
-
-@app.route("/main_page")
-def main_page():
-    return render_template("main_page.html", title="Главная страница")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -66,12 +62,6 @@ def login():
     return render_template("login_page.html", title="Авторизация", form=form)
 
 
-@app.route("/personal_account")
-@login_required
-def personal_account():
-    return render_template("personal_account_page.html", title="Личный кабинет")
-
-
 @app.route("/change_avatar", methods=["GET", "POST"])
 @login_required
 def change_avatar():
@@ -106,30 +96,65 @@ def change_password():
         return render_template("change_password_page.html", title="Смена пароля", form=form)
 
 
+@app.route("/main_page")
+def main_page():
+    db_sess = db_session.create_session()
+    books = db_sess.query(Book).all()
+    if current_user.is_authenticated:
+        user_books = db_sess.query(Book).filter(Book.user_id == current_user.id).all()
+    return render_template("main_page.html", title="Главная страница", books=books)
+
+
+@app.route("/")
+def index():
+    return render_template("writer-page.html")
+
+
+@app.route("/personal_account")
+@login_required
+def personal_account():
+    return render_template("personal_account_page.html", title="Личный кабинет")
+
+
 @app.route("/show_book/<int:book_id>")
 def show_book(book_id):
     db_sess = db_session.create_session()
     book = db_sess.query(Book).filter(Book.id == book_id).first()
-    images = book.image_links.split()
+    image = book.image_link.split()
+    content_analysis = book.content_analysis
+    if not image:
+        image = "static/images/skins/standard-image.jpg"
     return render_template("book_info_page.html",
-                           title=book.title, images=images, author=book.book_author, genre=book.genre.title)
+                           title=book.title, image=image, author=book.book_author, genre=book.genre.title,
+                           user_author=book.user.nickname, content_analysis=content_analysis)
 
 
 @app.route("/edit_book/<int:book_id>", methods=["GET", "POST"])
 @login_required
 def edit_book(book_id):
+    form = EditBookForm()
     db_sess = db_session.create_session()
     book = db_sess.query(Book).filter(Book.id == book_id).first()
-    form = EditBookForm()
-    form.genre.choices = [(i.id, i.title) for i in db_sess.query(Genre).filter(Book.title).all()]
-    if request.method == "GET":
+    if not book:
+        abort(404, message="Такой книги не существует")
+    if request.method == "POST":
+        book.title = form.title.data
+        book.book_author = form.book_author.data
+        book.genre_id = form.genre.data
+        book.updated_date = datetime.now()
+        db_sess.commit()
+        return redirect(f"/show_book/{book_id}")
+    else:
+        form.genre.choices = [(i.id, i.title) for i in db_sess.query(Genre).all()]
         form.title.data = book.title
         form.book_author.data = book.book_author
-        form.genre.selected = book.genre.id
+        form.genre.data = book.genre_id
         return render_template("edit_book_page.html", form=form)
-    else:
-
-        return render_template("edit_book_page.html", form=form)
+        # else:
+        #     file = request.files['file']
+        #     with open(f"static/images/skins/{book.title}-{len(images)}.png", "wb") as file_write:
+        #         file_write.write(file.read())
+        #     return redirect(f"/edit_book/{book_id}")
 
 
 @app.route("/add_book/<int:book_id>", methods=["GET", "POST"])

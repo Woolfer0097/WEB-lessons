@@ -8,8 +8,7 @@
 form {
     margin: auto;
     text-align: center;
-    width: 600px;
-    padding: 20px;
+    width: 40%;
 }
 
 html,
@@ -28,6 +27,4 @@ body {
 
 footer {
   flex: 0 0 auto;
-
-  background: #e6ffe6;/*это свойство можно удалить, добавлено для наглядности*/
 }

@@ -15,7 +15,7 @@
             selector: '#mytextarea'
           });
         </script>
-        <title>{{title}}</title>
+        <title>Волчья Библиотека</title>
     </head>
     <body>
         <header>
@@ -38,10 +38,10 @@
                             <li class="nav-item">
                                 <a href="/change_avatar">
                                     {% if current_user.user_avatar %}
-                                        <img src="static/images/avatars/{{ current_user.user_avatar }}"
+                                        <img src="/static/images/avatars/{{ current_user.user_avatar }}"
                                              class="rounded float-end" alt="..." width="50px" height="50px">
                                     {% else %}
-                                        <img src="static/images/avatars/new_account.png" class="rounded float-end"
+                                        <img src="/static/images/avatars/new_account.png" class="rounded float-end"
                                              alt="..." width="50px" height="50px">
                                     {% endif %}
                                 </a>
@@ -52,7 +52,7 @@
                             <li class="nav-item">
                                 <a href="/register">
                                     Регистрация
-                                    <img src="static/images/avatars/new_account.png" class="rounded float-end" alt="..."
+                                    <img src="/static/images/avatars/new_account.png" class="rounded float-end" alt="..."
                                          width="50px" height="50px">
                                 </a>
                             </li>
@@ -83,11 +83,14 @@
         </main>
     </body>
     <footer role="contentinfo">
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar navbar-expand-md navbar-light bg-dark">
             <div class="collapse navbar-collapse" id="navbarFooter">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <h4 style="color: gray">©Woolfer0097</h4>
+                        <img src="/static/favicon_white.ico" width="32px" height="32px">
+                    </li>
+                    <li class="nav-item active">
+                        <h4 style="color: white">Woolfer0097</h4>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
