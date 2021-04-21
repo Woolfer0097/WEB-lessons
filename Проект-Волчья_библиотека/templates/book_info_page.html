@@ -1,38 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h5 style="text-align: right; padding: 10px">Книгу разместил: {{ user_author }}</h5>
-    <form action="" method="post">
-        <h1 class="font-weight-bold">{{ title }}</h1>
-        <h3 class="font-weight-bold">{{ author }}</h3>
-        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                {% for link in images %}
-                    {% if loop.index0 == 0 %}
-                        <div class="carousel-item active" data-bs-interval="2000">
-                          <img src="/{{ link }}" class="d-block w-100" width="500" height="500"
-                               alt="Изображение не найдено">
-                        </div>
-                    {% else %}
-                        <div class="carousel-item" data-bs-interval="2000">
-                          <img src="/{{ link }}" class="d-block w-100" width="500" height="500"
-                               alt="Изображение не найдено">
-                        </div>
-                    {% endif %}
-                {% endfor %}
+    <div class="card border-dark my-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-center">
+                <img class="align-middle" src="/{{ image }}" width="300px" height="300px">
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-<!--        <form action="" method="post" novalidate enctype="multipart/form-data">-->
-<!--           <div class="form-group">-->
-<!--                <label for="photo">Выберите файл</label>-->
-<!--                <input type="file" class="form-control-file" id="photo" name="file">-->
-<!--            </div>-->
-<!--            <button type="submit" class="btn btn-primary">Отправить</button>-->
-<!--        </form>-->
-    </form>
-    <div class="text-show">
-        <p class="display-1 font-weight-bold">Анализ</p>
-        {{ content_analysis|safe }}
+        <div class="card-body text-dark">
+            <h1 class="card-title font-weight-bold display-3 text-center">{{ genre }} «{{ title }}»</h1>
+            <p class="card-text text-center">{{ book_author }}</p>
+            <p class="card-text text-right"><small class="text-muted">Последнее изменение: {{ last_update }}</small></p>
+            <p class="card-tex text-right"><small class="text-muted">Книгу разместил: {{ user_author }}</small></p>
+            <hr class="text-dark" align="center" width="100%" size="4" />
+            <p class="display-1 font-weight-bold text-center my-2">Анализ</p>
+            {% if content_analysis %}
+                <div class="d-flex justify-content-left">
+                    <div>{{ content_analysis|safe }}</div>
+                </div>
+            {% else %}
+                <h1 class="text-secondary text-center">Информация отсутствует</h1>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

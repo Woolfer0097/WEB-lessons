@@ -9,6 +9,7 @@ from forms.login import LoginForm
 from forms.register import RegisterForm
 from forms.edit_book import EditBookForm
 from forms.change_password import ChangePasswordForm
+import os, random
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -100,8 +101,6 @@ def change_password():
 def main_page():
     db_sess = db_session.create_session()
     books = db_sess.query(Book).all()
-    if current_user.is_authenticated:
-        user_books = db_sess.query(Book).filter(Book.user_id == current_user.id).all()
     return render_template("main_page.html", title="Главная страница", books=books)
 
 
@@ -113,20 +112,23 @@ def index():
 @app.route("/personal_account")
 @login_required
 def personal_account():
-    return render_template("personal_account_page.html", title="Личный кабинет")
+    db_sess = db_session.create_session()
+    user_books = db_sess.query(Book).filter(Book.user_id == current_user.id).all()
+    return render_template("personal_account_page.html", books=user_books)
 
 
 @app.route("/show_book/<int:book_id>")
 def show_book(book_id):
     db_sess = db_session.create_session()
     book = db_sess.query(Book).filter(Book.id == book_id).first()
-    image = book.image_link.split()
     content_analysis = book.content_analysis
-    if not image:
+    l_u = book.updated_date
+    image = book.image_link
+    if not image or not os.path.exists(image):
         image = "static/images/skins/standard-image.jpg"
     return render_template("book_info_page.html",
                            title=book.title, image=image, author=book.book_author, genre=book.genre.title,
-                           user_author=book.user.nickname, content_analysis=content_analysis)
+                           user_author=book.user.nickname, content_analysis=content_analysis, last_update=l_u)
 
 
 @app.route("/edit_book/<int:book_id>", methods=["GET", "POST"])
@@ -142,14 +144,24 @@ def edit_book(book_id):
         book.book_author = form.book_author.data
         book.genre_id = form.genre.data
         book.updated_date = datetime.now()
+        book.content_analysis = request.form['text']
+        file = request.files['file']
+        image_link = f"static/images/skins/{book.title}-{random.randint(1, 100000)}.png"
+        os.remove(book.image_link)
+        with open(f"{image_link}", "wb") as file_write:
+            file_write.write(file.read())
+        book.image_link = image_link
         db_sess.commit()
         return redirect(f"/show_book/{book_id}")
     else:
+        image = book.image_link
+        if not image or not os.path.exists(image):
+            image = "static/images/skins/standard-image.jpg"
         form.genre.choices = [(i.id, i.title) for i in db_sess.query(Genre).all()]
         form.title.data = book.title
         form.book_author.data = book.book_author
         form.genre.data = book.genre_id
-        return render_template("edit_book_page.html", form=form)
+        return render_template("edit_book_page.html", form=form, book=book, image_link=image)
         # else:
         #     file = request.files['file']
         #     with open(f"static/images/skins/{book.title}-{len(images)}.png", "wb") as file_write:
@@ -157,16 +169,17 @@ def edit_book(book_id):
         #     return redirect(f"/edit_book/{book_id}")
 
 
-@app.route("/add_book/<int:book_id>", methods=["GET", "POST"])
-@login_required
-def add_book(book_id):
-    pass
-
-
 @app.route("/delete_book/<int:book_id>", methods=["GET", "POST"])
 @login_required
 def delete_book(book_id):
     pass
+
+
+@app.route("/add_book", methods=["GET", "POST"])
+@login_required
+def add_book():
+    form = EditBookForm()
+    return render_template("edit_book_page.html", form=form, book=book)
 
 
 @app.route('/logout')
