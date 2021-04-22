@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="display-1 font-weight-bold text-center">Книги</h1>
-    <div class="d-flex justify-content-right">
-        <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search">
-        <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
-    </div>
+    <form action="" method="post" enctype="multipart/form-data">
+        <h1 class="display-1 font-weight-bold text-center">Книги</h1>
+        <div class="d-flex justify-content-right">
+                <input class="form-control mr-sm-2" name="title-search" placeholder="Поиск по названию">
+                <input class="form-control mr-sm-2" name="author-search" placeholder="Поиск по автору">
+                <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+        </div>
+    </form>
     <div class="row">
     {% for book in books %}
         <div class="col-3 card m-5">

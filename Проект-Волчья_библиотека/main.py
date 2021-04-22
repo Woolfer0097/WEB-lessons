@@ -60,7 +60,7 @@ def login():
         user = db_sess.query(User).filter((User.email == form.email.data) | (User.nickname == form.email.data)).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/main_page")
+            return redirect("/")
         return render_template('login_page.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -101,16 +101,18 @@ def change_password():
         return render_template("change_password_page.html", title="Смена пароля", form=form)
 
 
-@app.route("/main_page")
-def main_page():
-    db_sess = db_session.create_session()
-    books = db_sess.query(Book).all()
-    return render_template("main_page.html", title="Главная страница", books=books)
-
-
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("writer-page.html")
+    db_sess = db_session.create_session()
+    if request.method == "POST":
+        author = request.form['author-search']
+        title = request.form['title-search']
+        books = db_sess.query(Book).filter(Book.title.like(f"%{title.strip()}%")).filter(
+            Book.book_author.like(f"%{author.strip()}%")).all()
+        return render_template("main_page.html", title="Главная страница", books=books)
+    else:
+        books = db_sess.query(Book).all()
+        return render_template("main_page.html", title="Главная страница", books=books)
 
 
 @app.route("/personal_account")
@@ -161,7 +163,7 @@ def edit_book(book_id):
         if file_book:
             file_link = f"static/files/{file_book.filename}"
             with open(file_link, "wb") as file_write:
-                file_write.write(file_image.read())
+                file_write.write(file_book.read())
             book.pdf_link = file_link
         db_sess.commit()
         return redirect(f"/show_book/{book_id}")
@@ -212,12 +214,13 @@ def add_book():
         if file_book:
             file_link = f"static/files/{file_book.filename}"
             with open(file_link, "wb") as file_write:
-                file_write.write(file_image.read())
+                file_write.write(file_book.read())
             book.pdf_link = file_link
         current_user.books.append(book)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect(f"/show_book/{book.id}")
+        last_id = [int(*i) for i in db_sess.query(Book.id).all()]
+        return redirect(f"/show_book/{last_id[-1]}")
     else:
         form.genre.choices = [(i.id, i.title) for i in db_sess.query(Genre).all()]
         return render_template("add_book_page.html", form=form)
@@ -235,7 +238,7 @@ def download_file(book_id):
 @login_required
 def logout():
     logout_user()
-    return redirect("/main_page")
+    return redirect("/")
 
 
 if __name__ == '__main__':
