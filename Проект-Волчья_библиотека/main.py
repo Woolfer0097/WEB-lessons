@@ -109,10 +109,11 @@ def index():
         title = request.form['title-search']
         books = db_sess.query(Book).filter(Book.title.like(f"%{title.strip()}%")).filter(
             Book.book_author.like(f"%{author.strip()}%")).all()
-        return render_template("main_page.html", title="Главная страница", books=books)
+        return render_template("main_page.html", title="Главная страница", books=books, books_count=len(books),
+                               req=f"{title} {author}")
     else:
         books = db_sess.query(Book).all()
-        return render_template("main_page.html", title="Главная страница", books=books)
+        return render_template("main_page.html", title="Главная страница", books=books, books_count=len(books))
 
 
 @app.route("/personal_account")
@@ -120,7 +121,7 @@ def index():
 def personal_account():
     db_sess = db_session.create_session()
     user_books = db_sess.query(Book).filter(Book.user_id == current_user.id).all()
-    return render_template("personal_account_page.html", books=user_books)
+    return render_template("personal_account_page.html", books=user_books, books_count=len(user_books))
 
 
 @app.route("/show_book/<int:book_id>", methods=["GET", "POST"])
@@ -206,13 +207,13 @@ def add_book():
         book.content_analysis = request.form['text']
         file_image = request.files['file']
         file_book = request.files['file_book']
+        image_link = f"static/images/skins/{book.title}-{random.randint(1, 100000)}.png"
+        file_link = f"static/files/{file_book.filename}"
         if file_image:
-            image_link = f"static/images/skins/{book.title}-{random.randint(1, 100000)}.png"
             with open(image_link, "wb") as file_write:
                 file_write.write(file_image.read())
             book.image_link = image_link
         if file_book:
-            file_link = f"static/files/{file_book.filename}"
             with open(file_link, "wb") as file_write:
                 file_write.write(file_book.read())
             book.pdf_link = file_link
@@ -227,7 +228,6 @@ def add_book():
 
 
 @app.route("/download_file/<int:book_id>")
-@login_required
 def download_file(book_id):
     db_sess = db_session.create_session()
     book = db_sess.query(Book).filter(Book.id == book_id).first()
