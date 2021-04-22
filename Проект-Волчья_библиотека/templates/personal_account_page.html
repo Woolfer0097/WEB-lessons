@@ -7,11 +7,9 @@
         <a href="/change_avatar" class="btn btn-dark mx-3">Смена аватара</a>
     </div>
     <hr class="text-dark" align="center" width="100%" size="4" />
-        {% if not books %}
-            <div class="d-flex justify-content-center">
-                <a href="/add_book" class="btn btn-dark mx-3">Добавить книгу</a>
-            </div>
-        {% else %}
+        <div class="d-flex justify-content-center">
+            <a href="/add_book" class="btn btn-dark mx-3">Добавить книгу</a>
+        </div>
         <div class="row">
             {% for book in books %}
                 <div class="col-3 card m-5">
@@ -50,5 +48,4 @@
                 </div>
             {% endfor %}
         </div>
-        {% endif %}
 {% endblock %}
